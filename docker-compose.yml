@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  db-postgres:
+    container_name: ${DB_CONTAINER_NAME}
+    platform: linux/amd64
+    image: 'postgres:${DB_POSTGRES_VERSION}'
+    restart: on-failure
+    ports:
+      - "${DB_DOCKER_PORT}:5432"
+    volumes:
+      - type: bind
+        source: ./scripts/${DB_ROLE_SCRIPT}
+        target: /docker-entrypoint-initdb.d/1-${DB_ROLE_SCRIPT}
+        read_only: true
+      - type: bind
+        source: ./scripts/${DB_INIT_SCRIPT}
+        target: /docker-entrypoint-initdb.d/2-${DB_INIT_SCRIPT}
+        read_only: true
+      - type: bind
+        source: ./scripts/${DB_DATA_SCRIPT}
+        target: /docker-entrypoint-initdb.d/3-${DB_DATA_SCRIPT}
+        read_only: true
+      - type: bind
+        source: ./${DB_DATA_DIR}
+        target: /var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
