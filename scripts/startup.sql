@@ -1,95 +1,11 @@
-grant create, usage on schema public to public;
-
-grant create, usage on schema public to sppadmin;
-
-grant create, usage on schema public to spptgbot;
-
-create schema nodes;
-
-comment on schema nodes is 'Схема для представления и работы с функциями';
-
-alter schema nodes owner to sppadmin;
-
-grant create, usage on schema nodes to spptgbot;
-
-create schema tasks;
-
-comment on schema tasks is 'Схема для представления и работы с задачами';
-
-alter schema tasks owner to sppadmin;
-
-grant create, usage on schema tasks to spptgbot;
-
-create schema plugins;
-
-comment on schema plugins is 'Схема для представления и работы с плагинами';
-
-alter schema plugins owner to sppadmin;
-
-grant create, usage on schema plugins to spptgbot;
-
-create schema sources;
-
-comment on schema sources is 'схема для представления и работы с источниками';
-
-alter schema sources owner to sppadmin;
-
-grant create, usage on schema sources to spptgbot;
-
-create schema ml;
-
-comment on schema ml is 'Схема для представления и работы с ml';
-
-alter schema ml owner to sppadmin;
-
-grant create, usage on schema ml to spptgbot;
-
-create schema documents;
-
-comment on schema documents is 'Схема для представления и работы с документами';
-
-alter schema documents owner to sppadmin;
-
-grant create, usage on schema documents to spptgbot;
-
-create schema analytics;
-
-alter schema analytics owner to sppadmin;
-
-grant create, usage on schema analytics to spptgbot;
-
-create schema control;
-
-alter schema control owner to sppadmin;
-
-grant create, usage on schema control to spptgbot;
-
-create schema score;
-
-comment on schema score is 'schema for scoring process';
-
-alter schema score owner to sppadmin;
-
-grant create, usage on schema score to spptgbot;
-
-create schema users;
-
-alter schema users owner to sppadmin;
-
-grant create, usage on schema users to spptgbot;
-
--- create user "spptgbot";
-
--- comment on role "spptgbot" is 'login for users tg bot';
-
-
-
 create sequence tasks.sessions_n_session_id_seq
     as integer;
 
+alter sequence tasks.sessions_n_session_id_seq owner to sppadmin;
+
 grant select, update on sequence tasks.sessions_n_session_id_seq to spptgbot;
 
-create table if not exists nodes.node
+create table nodes.node
 (
     id     serial
         primary key,
@@ -98,11 +14,14 @@ create table if not exists nodes.node
     config json
 );
 
+alter table nodes.node
+    owner to sppadmin;
+
 grant select, update on sequence nodes.node_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on nodes.node to spptgbot;
 
-create table if not exists nodes.sessions
+create table nodes.sessions
 (
     id     serial
         primary key,
@@ -113,13 +32,16 @@ create table if not exists nodes.sessions
         references nodes.node
 );
 
+alter table nodes.sessions
+    owner to sppadmin;
+
 grant select, update on sequence nodes.sessions_id_seq to spptgbot;
 
 grant select, update on sequence nodes.sessions_nodeid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on nodes.sessions to spptgbot;
 
-create table if not exists plugins.plugin
+create table plugins.plugin
 (
     id         serial
         primary key,
@@ -129,11 +51,14 @@ create table if not exists plugins.plugin
     config     json
 );
 
+alter table plugins.plugin
+    owner to sppadmin;
+
 grant select, update on sequence plugins.plugin_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on plugins.plugin to spptgbot;
 
-create table if not exists tasks.status
+create table tasks.status
 (
     code integer not null
         primary key,
@@ -142,9 +67,12 @@ create table if not exists tasks.status
             unique
 );
 
+alter table tasks.status
+    owner to sppadmin;
+
 grant delete, insert, references, select, trigger, truncate, update on tasks.status to spptgbot;
 
-create table if not exists tasks.errors
+create table tasks.errors
 (
     id       serial
         primary key,
@@ -153,13 +81,16 @@ create table if not exists tasks.errors
     taskid   serial
 );
 
+alter table tasks.errors
+    owner to sppadmin;
+
 grant select, update on sequence tasks.errors_id_seq to spptgbot;
 
 grant select, update on sequence tasks.errors_taskid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on tasks.errors to spptgbot;
 
-create table if not exists tasks.schedule
+create table tasks.schedule
 (
     id     serial
         primary key,
@@ -167,13 +98,16 @@ create table if not exists tasks.schedule
     taskid serial
 );
 
+alter table tasks.schedule
+    owner to sppadmin;
+
 grant select, update on sequence tasks.schedule_id_seq to spptgbot;
 
 grant select, update on sequence tasks.schedule_taskid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on tasks.schedule to spptgbot;
 
-create table if not exists ml.model
+create table ml.model
 (
     id     serial
         primary key,
@@ -181,11 +115,14 @@ create table if not exists ml.model
     config json
 );
 
+alter table ml.model
+    owner to sppadmin;
+
 grant select, update on sequence ml.model_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on ml.model to spptgbot;
 
-create table if not exists sources.source
+create table sources.source
 (
     id      serial
         primary key,
@@ -196,11 +133,14 @@ create table if not exists sources.source
     created timestamp with time zone
 );
 
+alter table sources.source
+    owner to sppadmin;
+
 grant select, update on sequence sources.source_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on sources.source to spptgbot;
 
-create table if not exists documents.document
+create table documents.document
 (
     id          serial
         primary key,
@@ -216,16 +156,19 @@ create table if not exists documents.document
     otherdata   json
 );
 
+alter table documents.document
+    owner to sppadmin;
+
 grant select, update on sequence documents.document_id_seq to spptgbot;
 
 grant select, update on sequence documents.document_sourceid_seq to spptgbot;
 
-create index if not exists document_sourceid_index
+create index document_sourceid_index
     on documents.document (sourceid);
 
 grant delete, insert, references, select, trigger, truncate, update on documents.document to spptgbot;
 
-create table if not exists ml.plugin
+create table ml.plugin
 (
     modelid serial
         references ml.model,
@@ -233,11 +176,14 @@ create table if not exists ml.plugin
 )
     inherits (plugins.plugin);
 
+alter table ml.plugin
+    owner to sppadmin;
+
 grant select, update on sequence ml.plugin_modelid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on ml.plugin to spptgbot;
 
-create table if not exists sources.plugin
+create table sources.plugin
 (
     sourceid serial
         references sources.source,
@@ -245,11 +191,14 @@ create table if not exists sources.plugin
 )
     inherits (plugins.plugin);
 
+alter table sources.plugin
+    owner to sppadmin;
+
 grant select, update on sequence sources.plugin_sourceid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on sources.plugin to spptgbot;
 
-create table if not exists tasks.task
+create table tasks.task
 (
     id       serial
         primary key,
@@ -259,11 +208,14 @@ create table if not exists tasks.task
         unique
 );
 
+alter table tasks.task
+    owner to sppadmin;
+
 grant select, update on sequence tasks.task_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on tasks.task to spptgbot;
 
-create table if not exists tasks.sessions
+create table tasks.sessions
 (
     id           serial
         primary key,
@@ -276,6 +228,9 @@ create table if not exists tasks.sessions
         references nodes.sessions
 );
 
+alter table tasks.sessions
+    owner to sppadmin;
+
 alter sequence tasks.sessions_n_session_id_seq owned by tasks.sessions.n_session_id;
 
 grant select, update on sequence tasks.sessions_id_seq to spptgbot;
@@ -284,7 +239,7 @@ grant select, update on sequence tasks.sessions_taskid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on tasks.sessions to spptgbot;
 
-create table if not exists ml.score
+create table ml.score
 (
     id         serial
         primary key,
@@ -297,6 +252,9 @@ create table if not exists ml.score
         references ml.plugin
 );
 
+alter table ml.score
+    owner to sppadmin;
+
 grant select, update on sequence ml.score_id_seq to spptgbot;
 
 grant select, update on sequence ml.score_documentid_seq to spptgbot;
@@ -305,7 +263,7 @@ grant select, update on sequence ml.score_pluginid_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on ml.score to spptgbot;
 
-create table if not exists analytics.offload
+create table analytics.offload
 (
     id     serial
         primary key,
@@ -313,11 +271,14 @@ create table if not exists analytics.offload
     params json
 );
 
+alter table analytics.offload
+    owner to sppadmin;
+
 grant select, update on sequence analytics.offload_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on analytics.offload to spptgbot;
 
-create table if not exists analytics.offloaded_documents
+create table analytics.offloaded_documents
 (
     document integer not null
         primary key
@@ -326,20 +287,26 @@ create table if not exists analytics.offloaded_documents
         references analytics.offload
 );
 
+alter table analytics.offloaded_documents
+    owner to sppadmin;
+
 grant delete, insert, references, select, trigger, truncate, update on analytics.offloaded_documents to spptgbot;
 
-create table if not exists users.role
+create table users.role
 (
     id   serial
         primary key,
     name text not null
 );
 
+alter table users.role
+    owner to sppadmin;
+
 grant select, update on sequence users.role_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on users.role to spptgbot;
 
-create table if not exists users.role_source
+create table users.role_source
 (
     role   integer not null
         references users.role,
@@ -348,9 +315,12 @@ create table if not exists users.role_source
     unique (role, source)
 );
 
+alter table users.role_source
+    owner to sppadmin;
+
 grant delete, insert, references, select, trigger, truncate, update on users.role_source to spptgbot;
 
-create table if not exists users."user"
+create table users."user"
 (
     id        serial
         primary key,
@@ -359,11 +329,14 @@ create table if not exists users."user"
     auth      json
 );
 
+alter table users."user"
+    owner to sppadmin;
+
 grant select, update on sequence users.user_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on users."user" to spptgbot;
 
-create table if not exists users.user_role
+create table users.user_role
 (
     user_id integer not null
         references users."user",
@@ -372,9 +345,12 @@ create table if not exists users.user_role
     unique (user_id, role)
 );
 
+alter table users.user_role
+    owner to sppadmin;
+
 grant delete, insert, references, select, trigger, truncate, update on users.user_role to spptgbot;
 
-create table if not exists score.score
+create table score.score
 (
     id          serial
         primary key,
@@ -391,14 +367,17 @@ create table if not exists score.score
         unique (user_id, role_id, document_id)
 );
 
+alter table score.score
+    owner to sppadmin;
+
 grant select, update on sequence score.score_id_seq to spptgbot;
 
-create index if not exists score_document_id_index
+create index score_document_id_index
     on score.score using hash (document_id);
 
 grant delete, insert, references, select, trigger, truncate, update on score.score to spptgbot;
 
-create table if not exists analytics.digest
+create table analytics.digest
 (
     id      serial
         constraint digest_pk
@@ -409,11 +388,14 @@ create table if not exists analytics.digest
 
 comment on table analytics.digest is 'for digests';
 
+alter table analytics.digest
+    owner to sppadmin;
+
 grant select, update on sequence analytics.digest_id_seq to spptgbot;
 
 grant delete, insert, references, select, trigger, truncate, update on analytics.digest to spptgbot;
 
-create table if not exists analytics.digest_documents
+create table analytics.digest_documents
 (
     digest   integer not null,
     document integer not null,
@@ -421,9 +403,59 @@ create table if not exists analytics.digest_documents
         unique (digest, document)
 );
 
+alter table analytics.digest_documents
+    owner to sppadmin;
+
 grant delete, insert, references, select, trigger, truncate, update on analytics.digest_documents to spptgbot;
 
-create or replace view plugins.complete(tid, status, pid, repository, loaded, config, type, refid, refname) as
+create materialized view control.experts_score_view as
+SELECT sr.document_id,
+       d.sourceid,
+       d.title,
+       d.weblink,
+       d.published,
+       d.abstract,
+       d.loaded,
+       d.otherdata,
+       (SELECT s1.score ->> 'score'::text
+        FROM score.score s1
+        WHERE s1.user_id = 4
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_1_score,
+       (SELECT s1.score ->> 'comment'::text
+        FROM score.score s1
+        WHERE s1.user_id = 4
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_1_comment,
+       (SELECT s1.score ->> 'score'::text
+        FROM score.score s1
+        WHERE s1.user_id = 5
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_2_score,
+       (SELECT s1.score ->> 'comment'::text
+        FROM score.score s1
+        WHERE s1.user_id = 5
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_2_comment,
+       (SELECT s1.score ->> 'score'::text
+        FROM score.score s1
+        WHERE s1.user_id = 6
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_3_score,
+       (SELECT s1.score ->> 'comment'::text
+        FROM score.score s1
+        WHERE s1.user_id = 6
+          AND s1.document_id = sr.document_id
+        LIMIT 1) AS user_3_comment
+FROM score.score sr
+         JOIN documents.document d ON sr.document_id = d.id
+GROUP BY sr.document_id, d.id;
+
+alter materialized view control.experts_score_view owner to sppadmin;
+
+grant delete, insert, references, select, trigger, truncate, update on control.experts_score_view to spptgbot;
+
+create view plugins.complete(tid, status, pid, repository, loaded, config, type, refid, refname) as
 SELECT task.id AS tid,
        task.status,
        pl.id   AS pid,
@@ -458,9 +490,48 @@ FROM tasks.task
 
 comment on view plugins.complete is 'Выбирает задачи и добавляет к ним данные о плагине и связанным с ним объектом (источник, модель, pipeline)';
 
-grant delete, insert, references, select, trigger, truncate, update on plugins.complete to spptgbot;
+alter table plugins.complete
+    owner to sppadmin;
 
-create or replace function nodes.active_sessions()
+grant insert, references, select, trigger, update on plugins.complete to spptgbot;
+
+create view control.plugins_status
+            (pl_id, pl_active, src_id, src_name, pl_rep, status_name, docs, percent, next_start) as
+WITH plugin_data AS (SELECT pl.id    AS plid,
+                            pl.active,
+                            ss.id    AS ssid,
+                            ss.name,
+                            pl.repository,
+                            pl.config,
+                            st.name  AS status_name,
+                            ts.start AS next_start
+                     FROM tasks.task t
+                              JOIN tasks.status st ON t.status = st.code
+                              LEFT JOIN tasks.schedule ts ON t.id = ts.taskid
+                              JOIN sources.plugin pl ON t.pluginid = pl.id
+                              JOIN sources.source ss ON ss.id = pl.sourceid),
+     document_counts AS (SELECT d.sourceid,
+                                count(d.id)   AS doc_count,
+                                count(sse.id) AS score_count
+                         FROM documents.document d
+                                  LEFT JOIN score.score sse ON sse.document_id = d.id
+                         GROUP BY d.sourceid)
+SELECT pls.plid                                                                                  AS pl_id,
+       pls.active                                                                                AS pl_active,
+       pls.ssid                                                                                  AS src_id,
+       pls.name                                                                                  AS src_name,
+       'https://github.com/'::text || pls.repository                                             AS pl_rep,
+       pls.status_name,
+       COALESCE(dc.doc_count, 0::bigint)                                                         AS docs,
+       COALESCE(dc.score_count::numeric / NULLIF(dc.doc_count::numeric, 0::numeric), 0::numeric) AS percent,
+       pls.next_start
+FROM plugin_data pls
+         LEFT JOIN document_counts dc ON pls.ssid = dc.sourceid;
+
+alter table control.plugins_status
+    owner to sppadmin;
+
+create function nodes.active_sessions()
     returns TABLE(session_id integer, node_id integer, alive timestamp with time zone)
     language plpgsql
 as
@@ -474,9 +545,11 @@ $$;
 
 comment on function nodes.active_sessions() is 'Возвращает таблицу со всеми активными сессиями всех узлов';
 
+alter function nodes.active_sessions() owner to sppadmin;
+
 grant execute on function nodes.active_sessions() to spptgbot;
 
-create or replace function nodes.active_session(nodeid integer) returns integer
+create function nodes.active_session(nodeid integer) returns integer
     language plpgsql
 as
 $$
@@ -490,9 +563,11 @@ $$;
 
 comment on function nodes.active_session(integer) is 'Возвращает id активной сессии узла по его id (передаваемый параметр)';
 
+alter function nodes.active_session(integer) owner to sppadmin;
+
 grant execute on function nodes.active_session(integer) to spptgbot;
 
-create or replace function nodes.alive(__id integer) returns integer
+create function nodes.alive(__id integer) returns integer
     language plpgsql
 as
 $$
@@ -514,9 +589,11 @@ $$;
 
 comment on function nodes.alive(integer) is 'Функция, которую вызывает узел SPP для обновления статуса "я жив"';
 
+alter function nodes.alive(integer) owner to sppadmin;
+
 grant execute on function nodes.alive(integer) to spptgbot;
 
-create or replace function nodes.observe_node_session() returns integer
+create function nodes.observe_node_session() returns integer
     language plpgsql
 as
 $$
@@ -534,9 +611,11 @@ $$;
 
 comment on function nodes.observe_node_session() is 'Просматривает все активные сессии и проверяет, чтобы дата последнего обновления статуса "я жив" узла SPP был не больше N секунд. Если находятся сессии, чей статус не обновился, то для этой сессии вызывается функция nodes.kill_session(id integer)';
 
+alter function nodes.observe_node_session() owner to sppadmin;
+
 grant execute on function nodes.observe_node_session() to spptgbot;
 
-create or replace function nodes.kill_session(__id integer) returns integer
+create function nodes.kill_session(__id integer) returns integer
     language plpgsql
 as
 $$
@@ -548,9 +627,11 @@ $$;
 
 comment on function nodes.kill_session(integer) is 'Фукнция для уничтожения активной сессии узла SPP';
 
+alter function nodes.kill_session(integer) owner to sppadmin;
+
 grant execute on function nodes.kill_session(integer) to spptgbot;
 
-create or replace function tasks.add_task(__pluginid integer, iscreateschedule boolean) returns integer
+create function tasks.add_task(__pluginid integer, iscreateschedule boolean) returns integer
     language plpgsql
 as
 $$
@@ -567,9 +648,11 @@ begin
 end
 $$;
 
+alter function tasks.add_task(integer, boolean) owner to sppadmin;
+
 grant execute on function tasks.add_task(integer, boolean) to spptgbot;
 
-create or replace function plugins.on_addition_plugin() returns trigger
+create function plugins.on_addition_plugin() returns trigger
     language plpgsql
 as
 $$
@@ -588,6 +671,8 @@ begin
     return new;
 end
 $$;
+
+alter function plugins.on_addition_plugin() owner to sppadmin;
 
 create trigger plugin_insert_observer
     after insert
@@ -608,7 +693,7 @@ execute procedure plugins.on_addition_plugin();
 
 grant execute on function plugins.on_addition_plugin() to spptgbot;
 
-create or replace function plugins.plugin_update_active() returns trigger
+create function plugins.plugin_update_active() returns trigger
     language plpgsql
 as
 $$
@@ -626,6 +711,8 @@ begin
     return new;
 end
 $$;
+
+alter function plugins.plugin_update_active() owner to sppadmin;
 
 create trigger plugin_update_observer
     after update
@@ -650,31 +737,7 @@ execute procedure plugins.plugin_update_active();
 
 grant execute on function plugins.plugin_update_active() to spptgbot;
 
-create or replace function tasks.check_add_task() returns trigger
-    language plpgsql
-as
-$$
-    declare pluginIdExists boolean;
-begin
-    select (pl.id is not null) from plugins.plugin pl where pl.id = new.pluginid into pluginIdExists;
-    if (pluginIdExists) then
-        return NEW;
-    else
-        raise exception 'Nonexistent ID --> %', new.pluginid;
-        return null;
-    end if;
-end
-$$;
-
-create trigger pluginid_add_task_check
-    before insert or update
-    on tasks.task
-    for each row
-execute procedure tasks.check_add_task();
-
-grant execute on function tasks.check_add_task() to spptgbot;
-
-create or replace function tasks.schedule(taskid integer, start timestamp with time zone) returns integer
+create function tasks.schedule(taskid integer, start timestamp with time zone) returns integer
     language plpgsql
 as
 $$
@@ -696,9 +759,11 @@ begin
 end
 $$;
 
+alter function tasks.schedule(integer, timestamp with time zone) owner to sppadmin;
+
 grant execute on function tasks.schedule(integer, timestamp with time zone) to spptgbot;
 
-create or replace function tasks.unschedule(scheduleid integer, _status integer) returns integer
+create function tasks.unschedule(scheduleid integer, _status integer) returns integer
     language plpgsql
 as
 $$
@@ -716,9 +781,11 @@ begin
 end
 $$;
 
+alter function tasks.unschedule(integer, integer) owner to sppadmin;
+
 grant execute on function tasks.unschedule(integer, integer) to spptgbot;
 
-create or replace function tasks.set_status(taskid integer, _status integer) returns integer
+create function tasks.set_status(taskid integer, _status integer) returns integer
     language plpgsql
 as
 $$
@@ -729,9 +796,11 @@ begin
 end
 $$;
 
-grant execute on function tasks.set_status(integer, integer) to spptgbot;
+alter function tasks.set_status(integer, integer, text) owner to sppadmin;
 
-create or replace function nodes.plugin_types(nodeid integer)
+grant execute on function tasks.set_status(integer, integer, text) to spptgbot;
+
+create function nodes.plugin_types(nodeid integer)
     returns TABLE(type text)
     language plpgsql
 as
@@ -741,9 +810,11 @@ begin
 end
 $$;
 
+alter function nodes.plugin_types(integer) owner to sppadmin;
+
 grant execute on function nodes.plugin_types(integer) to spptgbot;
 
-create or replace function nodes.init(__name text, __ip text, __config json) returns integer
+create function nodes.init(__name text, __ip text, __config json) returns integer
     language plpgsql
 as
 $$
@@ -768,9 +839,11 @@ begin
 end;
 $$;
 
+alter function nodes.init(text, text, json) owner to sppadmin;
+
 grant execute on function nodes.init(text, text, json) to spptgbot;
 
-create or replace function tasks.broke(nodeid integer, sessionid integer, comment text) returns integer
+create function tasks.broke(nodeid integer, sessionid integer, comment text) returns integer
     language plpgsql
 as
 $$
@@ -784,9 +857,11 @@ begin
 end
 $$;
 
+alter function tasks.broke(integer, integer, text) owner to sppadmin;
+
 grant execute on function tasks.broke(integer, integer, text) to spptgbot;
 
-create or replace function plugins.timer(id integer) returns interval
+create function plugins.timer(id integer) returns interval
     language plpgsql
 as
 $$
@@ -797,9 +872,11 @@ begin
 end
 $$;
 
+alter function plugins.timer(integer) owner to sppadmin;
+
 grant execute on function plugins.timer(integer) to spptgbot;
 
-create or replace function tasks.finish(nodeid integer, sessionid integer) returns integer
+create function tasks.finish(nodeid integer, sessionid integer) returns integer
     language plpgsql
 as
 $$
@@ -820,9 +897,11 @@ begin
 end
 $$;
 
+alter function tasks.finish(integer, integer) owner to sppadmin;
+
 grant execute on function tasks.finish(integer, integer) to spptgbot;
 
-create or replace function tasks.relevant(nodeid integer)
+create function tasks.relevant(nodeid integer)
     returns TABLE(sessionid integer, taskid integer, taskstatus integer, pluginid integer, repository text, loaded timestamp with time zone, config json, type text, referenceid integer, referencename text)
     language plpgsql
 as
@@ -864,9 +943,11 @@ begin
 end
 $$;
 
+alter function tasks.relevant(integer) owner to sppadmin;
+
 grant execute on function tasks.relevant(integer) to spptgbot;
 
-create or replace function documents.equals(lhid integer, lhtitle text, lhweblink text, lhpubdate timestamp with time zone, lhsource integer, rhid integer, rhtitle text, rhweblink text, rhpubdate timestamp with time zone, rhsource integer) returns boolean
+create function documents.equals(lhid integer, lhtitle text, lhweblink text, lhpubdate timestamp with time zone, lhsource integer, rhid integer, rhtitle text, rhweblink text, rhpubdate timestamp with time zone, rhsource integer) returns boolean
     language plpgsql
 as
 $$
@@ -893,9 +974,11 @@ begin
 end;
 $$;
 
+alter function documents.equals(integer, text, text, timestamp with time zone, integer, integer, text, text, timestamp with time zone, integer) owner to sppadmin;
+
 grant execute on function documents.equals(integer, text, text, timestamp with time zone, integer, integer, text, text, timestamp with time zone, integer) to spptgbot;
 
-create or replace function documents.save(sourceid integer, newtitle text, newabstract text, newtext text, newweblink text, newlocallink text, newotherdata json, newpubdate timestamp with time zone, newloaddate timestamp with time zone) returns integer
+create function documents.save(sourceid integer, newtitle text, newabstract text, newtext text, newweblink text, newlocallink text, newotherdata json, newpubdate timestamp with time zone, newloaddate timestamp with time zone) returns integer
     language plpgsql
 as
 $$
@@ -928,9 +1011,11 @@ begin
 end;
 $$;
 
+alter function documents.save(integer, text, text, text, text, text, json, timestamp with time zone, timestamp with time zone) owner to sppadmin;
+
 grant execute on function documents.save(integer, text, text, text, text, text, json, timestamp with time zone, timestamp with time zone) to spptgbot;
 
-create or replace function documents."all"(_sourceid integer)
+create function documents."all"(_sourceid integer)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone, abstract text, text text, storagelink text, loaded timestamp with time zone, otherdata json)
     language plpgsql
 as
@@ -944,9 +1029,11 @@ begin
 end
 $$;
 
+alter function documents."all"(integer) owner to sppadmin;
+
 grant execute on function documents."all"(integer) to spptgbot;
 
-create or replace function documents.littles(_sourceid integer)
+create function documents.littles(_sourceid integer)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone)
     language plpgsql
 as
@@ -958,9 +1045,11 @@ begin
 end
 $$;
 
+alter function documents.littles(integer) owner to sppadmin;
+
 grant execute on function documents.littles(integer) to spptgbot;
 
-create or replace function analytics.offload_document(offloadid integer, documentid integer) returns integer
+create function analytics.offload_document(offloadid integer, documentid integer) returns integer
     language plpgsql
 as
 $$
@@ -972,9 +1061,11 @@ begin
 end
 $$;
 
+alter function analytics.offload_document(integer, integer) owner to sppadmin;
+
 grant execute on function analytics.offload_document(integer, integer) to spptgbot;
 
-create or replace function analytics.export(export_id integer)
+create function analytics.export(export_id integer)
     returns TABLE(id integer, title text, weblink text, published timestamp with time zone, abstract text, text text, storagelink text, loaded timestamp with time zone, otherdata json, source_id integer, source_name text)
     language plpgsql
 as
@@ -998,9 +1089,11 @@ begin
 end
 $$;
 
+alter function analytics.export(integer) owner to sppadmin;
+
 grant execute on function analytics.export(integer) to spptgbot;
 
-create or replace function analytics.export_lists()
+create function analytics.export_lists()
     returns TABLE(id integer, date timestamp with time zone, count bigint)
     language plpgsql
 as
@@ -1011,9 +1104,11 @@ begin
 end
 $$;
 
+alter function analytics.export_lists() owner to sppadmin;
+
 grant execute on function analytics.export_lists() to spptgbot;
 
-create or replace function control.plugins_observe()
+create function control.plugins_observe()
     returns TABLE(id integer, name text, repository text, active boolean, status_code integer, status text, docs bigint, errors bigint)
     language plpgsql
 as
@@ -1029,9 +1124,11 @@ begin
 end
 $$;
 
+alter function control.plugins_observe() owner to sppadmin;
+
 grant execute on function control.plugins_observe() to spptgbot;
 
-create or replace function users.roleinfo(_id integer)
+create function users.roleinfo(_id integer)
     returns TABLE(id integer, name text, src_id integer, src_name text, src_sphere text)
     language plpgsql
 as
@@ -1044,9 +1141,11 @@ begin
 end
 $$;
 
+alter function users.roleinfo(integer) owner to sppadmin;
+
 grant execute on function users.roleinfo(integer) to spptgbot;
 
-create or replace function score.save(_uid integer, telegram_id integer, _did integer, _rid integer, _score json, _comment text) returns integer
+create function score.save(_uid integer, telegram_id integer, _did integer, _rid integer, _score json, _comment text) returns integer
     language plpgsql
 as
 $$
@@ -1059,9 +1158,11 @@ begin
 end
 $$;
 
+alter function score.save(integer, integer, integer, integer, json, text) owner to sppadmin;
+
 grant execute on function score.save(integer, integer, integer, integer, json, text) to spptgbot;
 
-create or replace function users.sources(_id integer) returns integer[]
+create function users.sources(_id integer) returns integer[]
     language plpgsql
 as
 $$
@@ -1079,28 +1180,11 @@ begin
 end
 $$;
 
+alter function users.sources(integer) owner to sppadmin;
+
 grant execute on function users.sources(integer) to spptgbot;
 
-create or replace function users.roles(_id integer) returns integer[]
-    language plpgsql
-as
-$$
-    declare roles integer[];
-begin
---         Array всех ролей, доступных для пользователя (user ID)
-    select ARRAY(
-    select distinct ur.role
-    from (users.user u join users.user_role ur on u.id = ur.user_id)
-    where u.id = _id
-    order by ur.role
-       ) into roles;
-    return roles;
-end
-$$;
-
-grant execute on function users.roles(integer) to spptgbot;
-
-create or replace function score.documents(_uid integer)
+create function score.documents(_uid integer)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone, abstract text, text text, storagelink text, loaded timestamp with time zone, otherdata json)
     language plpgsql
 as
@@ -1129,9 +1213,11 @@ begin
 end
 $$;
 
-grant execute on function score.documents(integer) to spptgbot;
+alter function score.documents(integer, integer) owner to sppadmin;
 
-create or replace function score.stats(_uid integer)
+grant execute on function score.documents(integer, integer) to spptgbot;
+
+create function score.stats(_uid integer)
     returns TABLE(srcid integer, srcname text, documents bigint)
     language plpgsql
 as
@@ -1147,9 +1233,11 @@ begin
 end
 $$;
 
+alter function score.stats(integer) owner to sppadmin;
+
 grant execute on function score.stats(integer) to spptgbot;
 
-create or replace function score.document(_uid integer, srcid integer)
+create function score.document(_uid integer, srcid integer)
     returns TABLE(id integer, title text, weblink text, published timestamp with time zone, abstract text, storagelink text, loaded timestamp with time zone, otherdata json, src_id integer, src_name text, src_sphere text)
     language plpgsql
 as
@@ -1175,9 +1263,11 @@ begin
 end
 $$;
 
+alter function score.document(integer, integer) owner to sppadmin;
+
 grant execute on function score.document(integer, integer) to spptgbot;
 
-create or replace function score.roles(_uid integer)
+create function score.roles(_uid integer)
     returns TABLE(id integer, name text)
     language plpgsql
 as
@@ -1190,9 +1280,11 @@ begin
 end
 $$;
 
+alter function score.roles(integer) owner to sppadmin;
+
 grant execute on function score.roles(integer) to spptgbot;
 
-create or replace function users.roles(_uid integer, _sid integer)
+create function users.roles(_uid integer, _sid integer)
     returns TABLE(id integer, name text)
     language plpgsql
 as
@@ -1206,9 +1298,11 @@ begin
 end
 $$;
 
+alter function users.roles(integer, integer) owner to sppadmin;
+
 grant execute on function users.roles(integer, integer) to spptgbot;
 
-create or replace function sources."create"(_name text, _sphere text, _roles integer[]) returns integer
+create function sources."create"(_name text, _sphere text, _roles integer[]) returns integer
     language plpgsql
 as
 $$
@@ -1224,9 +1318,11 @@ begin
 end
 $$;
 
+alter function sources."create"(text, text, integer[]) owner to sppadmin;
+
 grant execute on function sources."create"(text, text, integer[]) to spptgbot;
 
-create or replace function users.auth(_id bigint, _token text)
+create function users.auth(_id bigint, _token text)
     returns TABLE(id integer, name text, privilege json, role_id integer, role_name text)
     language plpgsql
 as
@@ -1245,9 +1341,11 @@ begin
 end
 $$;
 
+alter function users.auth(bigint, text) owner to sppadmin;
+
 grant execute on function users.auth(bigint, text) to spptgbot;
 
-create or replace function analytics.digests()
+create function analytics.digests()
     returns TABLE(id integer, date timestamp with time zone, comment text)
     language plpgsql
 as
@@ -1258,9 +1356,11 @@ begin
 end
 $$;
 
+alter function analytics.digests() owner to sppadmin;
+
 grant execute on function analytics.digests() to spptgbot;
 
-create or replace function analytics.selection(_role integer)
+create function analytics.selection(_role integer)
     returns TABLE(document integer, sids integer[], users integer[], scores json[])
     language plpgsql
 as
@@ -1277,9 +1377,11 @@ begin
 end
 $$;
 
+alter function analytics.selection(integer) owner to sppadmin;
+
 grant execute on function analytics.selection(integer) to spptgbot;
 
-create or replace function documents.without_text(_did integer)
+create function documents.without_text(_did integer)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone, abstract text, storagelink text, loaded timestamp with time zone, otherdata json)
     language plpgsql
 as
@@ -1292,9 +1394,11 @@ begin
 end
 $$;
 
+alter function documents.without_text(integer) owner to sppadmin;
+
 grant execute on function documents.without_text(integer) to spptgbot;
 
-create or replace function documents.last(_sourcename text)
+create function documents.last(_sourcename text)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone)
     language plpgsql
 as
@@ -1313,9 +1417,11 @@ begin
 end
 $$;
 
+alter function documents.last(text) owner to sppadmin;
+
 grant execute on function documents.last(text) to spptgbot;
 
-create or replace function documents.last(_sourceid integer)
+create function documents.last(_sourceid integer)
     returns TABLE(id integer, sourceid integer, title text, weblink text, published timestamp with time zone)
     language plpgsql
 as
@@ -1331,9 +1437,11 @@ begin
 end
 $$;
 
+alter function documents.last(integer) owner to sppadmin;
+
 grant execute on function documents.last(integer) to spptgbot;
 
-create or replace function score.info_for(_uid integer)
+create function score.info_for(_uid integer)
     returns TABLE(srcid integer, srcname text)
     language plpgsql
 as
@@ -1347,5 +1455,121 @@ begin
 end
 $$;
 
+alter function score.info_for(integer) owner to sppadmin;
+
 grant execute on function score.info_for(integer) to spptgbot;
+
+create function users.roles(_id integer) returns integer[]
+    language plpgsql
+as
+$$
+    declare roles integer[];
+begin
+--         Array всех ролей, доступных для пользователя (user ID)
+    select ARRAY(
+    select distinct ur.role
+    from (users.user u join users.user_role ur on u.id = ur.user_id)
+    where u.id = _id
+    order by ur.role
+       ) into roles;
+    return roles;
+end
+$$;
+
+alter function users.roles(integer) owner to sppadmin;
+
+create function tasks.check_add_task() returns trigger
+    language plpgsql
+as
+$$
+    declare pluginIdExists boolean;
+begin
+    select (pl.id is not null) from plugins.plugin pl where pl.id = new.pluginid into pluginIdExists;
+    if (pluginIdExists) then
+        return NEW;
+    else
+        raise exception 'Nonexistent ID --> %', new.pluginid;
+        return null;
+    end if;
+end
+$$;
+
+alter function tasks.check_add_task() owner to sppadmin;
+
+create trigger pluginid_add_task_check
+    before insert or update
+    on tasks.task
+    for each row
+execute procedure tasks.check_add_task();
+
+create function tasks.stop(_taskid integer) returns integer
+    language plpgsql
+as
+$$
+begin
+    if exists(select * from tasks.schedule s where s.taskid = _taskid) then
+        --     Удаление записи из таблицы расписания
+        delete from tasks.schedule where taskid = _taskid;
+    end if;
+    select tasks.set_status(_taskid, 0);
+
+    return 1;
+end
+$$;
+
+alter function tasks.stop(integer) owner to sppadmin;
+
+create function plugins.update_trigger_interval(p_id integer, p_new_interval text) returns void
+    language plpgsql
+as
+$$
+BEGIN
+    UPDATE plugins.plugin
+    SET config = jsonb_set(
+        config::jsonb,
+        '{task,trigger,interval}',
+        p_new_interval,
+        false
+    )::json
+    WHERE id = p_id;
+END;
+$$;
+
+alter function plugins.update_trigger_interval(integer, text) owner to sppadmin;
+
+create function documents.exists(_sourceid integer, _title text, _weblink text, _published timestamp with time zone) returns boolean
+    language plpgsql
+as
+$$
+begin
+--     Функция находит документ в таблице documents.document по сложному идентификатору (title, weblink, published)
+--     Возвращает значение TRUE или FALSE
+    return exists(SELECT *
+FROM
+    documents.littles(_sourceid) d
+WHERE
+    d.title = _title
+    AND
+    d.weblink = _weblink
+    AND
+    d.published = _published);
+end
+$$;
+
+alter function documents.exists(integer, text, text, timestamp with time zone) owner to sppadmin;
+
+create function sources.add_plugin(_src_id integer, _repository text, _active boolean, _config json) returns integer
+    language plpgsql
+as
+$$
+    declare _pl_id integer;
+begin
+    insert into sources.plugin (repository, active, loaded, config, sourceid)
+        values (_repository, _active, now(), _config, _src_id) returning id into _pl_id;
+
+    return _pl_id;
+end
+$$;
+
+alter function sources.add_plugin(integer, text, boolean, json) owner to sppadmin;
 

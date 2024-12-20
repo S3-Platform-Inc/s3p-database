@@ -16,3 +16,9 @@ INSERT INTO tasks.status(code, name) VALUES (50, 'finish');
 INSERT INTO tasks.status(code, name) VALUES (60, 'broken');
 INSERT INTO tasks.status(code, name) VALUES (70, 'terminated');
 INSERT INTO tasks.status(code, name) VALUES (80, 'deactivated');
+
+
+-- установка основных ролей
+insert into users.role (id, name) VALUES (1, 'ALL');
+insert into users.role (id, name) VALUES (2, 'TEST');
+insert into users.role (id, name) VALUES (3, 'FINTECH');
