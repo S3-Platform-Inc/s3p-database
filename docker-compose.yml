@@ -6,6 +6,9 @@ services:
     platform: linux/amd64
     image: 'postgres:${DB_POSTGRES_VERSION}'
     restart: on-failure
+    networks:
+      - s3p-inner-net
+    hostname: s3p-db
     ports:
       - "${DB_DOCKER_PORT}:5432"
     volumes:
@@ -14,12 +17,16 @@ services:
         target: /docker-entrypoint-initdb.d/1-${DB_ROLE_SCRIPT}
         read_only: true
       - type: bind
+        source: ./scripts/${DB_SCHEMAS_SCRIPT}
+        target: /docker-entrypoint-initdb.d/2-${DB_SCHEMAS_SCRIPT}
+        read_only: true
+      - type: bind
         source: ./scripts/${DB_INIT_SCRIPT}
-        target: /docker-entrypoint-initdb.d/2-${DB_INIT_SCRIPT}
+        target: /docker-entrypoint-initdb.d/3-${DB_INIT_SCRIPT}
         read_only: true
       - type: bind
         source: ./scripts/${DB_DATA_SCRIPT}
-        target: /docker-entrypoint-initdb.d/3-${DB_DATA_SCRIPT}
+        target: /docker-entrypoint-initdb.d/4-${DB_DATA_SCRIPT}
         read_only: true
       - type: bind
         source: ./${DB_DATA_DIR}
@@ -28,3 +35,7 @@ services:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+networks:
+  s3p-inner-net:
+    external: true
