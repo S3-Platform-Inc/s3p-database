@@ -1573,3 +1573,25 @@ $$;
 
 alter function sources.add_plugin(integer, text, boolean, json) owner to sppadmin;
 
+create function documents.save_if_exist(_sourceid integer, newtitle text, newabstract text, newtext text, newweblink text, newlocallink text, newotherdata json, newpubdate timestamp with time zone, newloaddate timestamp with time zone) returns integer
+    language plpgsql
+as
+$$
+declare
+    docID INTEGER;
+    _is_exists BOOLEAN;
+begin
+    select documents.exists(_sourceid, newtitle, newweblink, newpubdate) into _is_exists;
+
+    if (docID is null) then
+        insert into documents.document (sourceid, title, weblink, published, abstract, text, storagelink, loaded, otherdata)
+        VALUES (_sourceid, newTitle, newWeblink, newPubDate, newAbstract, newText, newLocalLink, newLoadDate, newOtherData) returning id into docID;
+        return docID;
+    end if;
+
+    return -1;
+end;
+$$;
+
+alter function documents.save_if_exist(integer, text, text, text, text, text, json, timestamp with time zone, timestamp with time zone) owner to sppadmin;
+
