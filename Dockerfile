@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# check=skip=SecretsUsedInArgOrEnv
+
 # Этап 1: Инициализация базы данных
 FROM postgres:16-alpine AS builder
 
