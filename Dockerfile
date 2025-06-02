@@ -15,7 +15,7 @@ VOLUME /var/lib/postgresql/data
 USER postgres
 ENV POSTGRES_PASSWORD=temp_password
 ENV POSTGRES_DB=sppIntegrateDB
-RUN docker-entrypoint.sh postgres -p 5433 & sleep 45 && pg_ctl stop
+RUN docker-entrypoint.sh postgres & sleep 45 && pg_ctl stop
 
 # Этап 2: Финальный образ
 FROM postgres:16-alpine
