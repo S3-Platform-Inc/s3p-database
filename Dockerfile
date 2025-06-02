@@ -10,6 +10,10 @@ COPY init-scripts/*.sql /docker-entrypoint-initdb.d/
 # Временный том для данных
 VOLUME /var/lib/postgresql/data
 
+
+# Отключаем прослушивание TCP портов
+RUN echo "listen_addresses = ''" >> /usr/share/postgresql/postgresql.conf.sample
+
 # Запуск инициализации
 USER postgres
 ENV POSTGRES_PASSWORD=temp_password
