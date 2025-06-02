@@ -11,14 +11,11 @@ COPY init-scripts/*.sql /docker-entrypoint-initdb.d/
 VOLUME /var/lib/postgresql/data
 
 
-# Отключаем прослушивание TCP портов
-RUN echo "listen_addresses = ''" >> /usr/share/postgresql/postgresql.conf.sample
-
 # Запуск инициализации
 USER postgres
 ENV POSTGRES_PASSWORD=temp_password
 ENV POSTGRES_DB=sppIntegrateDB
-RUN docker-entrypoint.sh postgres & sleep 45 && pg_ctl stop
+RUN docker-entrypoint.sh postgres -p 5433 & sleep 45 && pg_ctl stop
 
 # Этап 2: Финальный образ
 FROM postgres:16-alpine
