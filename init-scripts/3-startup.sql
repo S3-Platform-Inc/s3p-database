@@ -424,6 +424,33 @@ create table documents.outbox
 alter table documents.outbox
     owner to sppadmin;
 
+create table ml.keyword_analysis
+(
+    document_id   integer                                      not null,
+    event_id      integer                                      not null,
+    word_list_id  text                                         not null,
+    keywords      jsonb                    default '{}'::jsonb not null
+        constraint check_keywords
+            check (jsonb_typeof(keywords) = 'object'::text),
+    analysis_time timestamp with time zone default CURRENT_TIMESTAMP,
+    constraint keyword_analysis_pk
+        primary key (event_id, document_id, word_list_id)
+);
+
+comment on table ml.keyword_analysis is 'Table for wordlist analysis storing';
+
+alter table ml.keyword_analysis
+    owner to sppadmin;
+
+create index keyword_analysis__index_gin
+    on ml.keyword_analysis using gin (keywords jsonb_path_ops);
+
+create index keyword_analysis__index_time
+    on ml.keyword_analysis (analysis_time);
+
+create index keyword_analysis__index_word_list_btree
+    on ml.keyword_analysis (word_list_id);
+
 create materialized view control.experts_score_view as
 SELECT sr.document_id,
        d.sourceid,
