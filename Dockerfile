@@ -17,12 +17,12 @@ RUN chmod -R 755 /docker-entrypoint-initdb.d/
 
 # Добавляем healthcheck для мониторинга состояния PostgreSQL
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD pg_isready -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-${POSTGRES_USER:-postgres}}" || exit 1
+    CMD pg_isready -U "${DATABASE_USER:-postgres}" -d "${DATABASE_NAME:-${DATABASE_USER:-postgres}}" || exit 1
 
 EXPOSE 5432
 
 VOLUME /var/lib/postgresql/data
 
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_DB=sppIntegrateDB
+ENV DATABASE_USER=postgres
+ENV DATABASE_NAME=sppIntegrateDB
 ENV PGDATA=/var/lib/postgresql/data
