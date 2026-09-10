@@ -54,4 +54,27 @@ The other variables already been filled in.
 
 > in progress
 
+## Claude Code plugin
+
+This repository is also a Claude Code plugin (`.claude-plugin/plugin.json`)
+  that ships three agents for analytics over the production database.
+All of them treat the database as read-only.
+
+| Agent | Model | Purpose |
+|---|---|---|
+| `fintech-digest-analyst` | inherit | Builds a fintech digest for a date window: extract, cluster, classify, analytics tables, digest and material files |
+| `news-theme-classifier` | haiku | Labels 200-row chunks of news with theme, region and fintech-lens flag; dispatched in parallel by the analyst |
+| `digest-citation-verifier` | sonnet | Checks a finished digest folder: cited ids exist and sit in the window, numbers reconcile, trends meet the evidence rule, SQL still runs |
+
+Install from a local checkout:
+
+```bash
+claude plugin install /path/to/s3p-database
+```
+
+The task prompt the agents were derived from lives in
+  `docs/digest/2026-09-10-q3-fintech-digest-task-prompt.md`.
+Connection variables are expected in `cloud/backup/.env` of the workspace
+  (see the analyst's system prompt).
+
 

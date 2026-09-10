@@ -1,0 +1,12 @@
+{
+  "name": "s3p-database",
+  "version": "0.1.0",
+  "description": "Claude Code agents for analytics over the s3pIntegrate news database: build a fintech digest for a date window, classify news by theme and region, and verify digest citations. Read-only against production.",
+  "author": {
+    "name": "S3-Platform-Inc",
+    "url": "https://github.com/S3-Platform-Inc"
+  },
+  "repository": "https://github.com/S3-Platform-Inc/s3p-database",
+  "license": "GPL-3.0",
+  "keywords": ["s3p", "postgres", "news", "digest", "fintech", "analytics"]
+}
